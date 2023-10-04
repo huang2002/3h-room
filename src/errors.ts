@@ -17,7 +17,7 @@ export class MemberNotFoundError extends Error {
 }
 /** dts2md break */
 /**
- * Raised when specific member cannot be found.
+ * Raised when max member count exceeded.
  */
 export class MemberOverflowError extends Error {
     constructor(identity: unknown) {
