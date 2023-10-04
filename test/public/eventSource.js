@@ -33,6 +33,7 @@ export const setupEventSource = (identity) => {
     eventSource.addEventListener('error', (event) => {
         output('info', `Connection lost due to an error. (identity: ${identity})`);
         console.error(event);
+        eventSource.close();
         eventSource = null;
     }, { once: true });
 
