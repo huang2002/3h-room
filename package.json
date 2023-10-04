@@ -8,7 +8,7 @@
   "scripts": {
     "prebuild": "node -e \"fs.existsSync('dist') && fs.rmSync('dist', { recursive: true })\"",
     "build": "tsc",
-    "test": "node ./test/server.cjs",
+    "test": "node ./test/app.cjs",
     "docs": "dts2md \"**/*.d.ts\" \"!index.d.ts\" -i ./dist -o ./docs -l -I Home.md"
   },
   "repository": {
