@@ -1,0 +1,41 @@
+{
+  "name": "3h-room",
+  "version": "0.1.0",
+  "description": "A simple lib for SSE room management.",
+  "main": "dist/index.js",
+  "type": "commonjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "prebuild": "node -e \"fs.existsSync('dist') && fs.rmSync('dist', { recursive: true })\"",
+    "build": "tsc",
+    "test": "node ./test/server.cjs",
+    "docs": "dts2md \"**/*.d.ts\" \"!index.d.ts\" -i ./dist -o ./docs -l -I Home.md"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/huang2002/3h-room.git"
+  },
+  "keywords": [
+    "backend",
+    "room",
+    "management",
+    "member",
+    "sse",
+    "3h"
+  ],
+  "author": "3h",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/huang2002/3h-room/issues"
+  },
+  "homepage": "https://github.com/huang2002/3h-room#readme",
+  "devDependencies": {
+    "@types/node": "^20.8.0",
+    "dts2md": "^0.4.4",
+    "express": "^4.18.2",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "3h-sse": "^0.3.1"
+  }
+}
