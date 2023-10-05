@@ -20,7 +20,9 @@ module.exports = (req, res) => {
         room.addMember(member);
     } catch (error) {
         res.status(403);
+        res.type('text/plain');
         res.end(String(error));
+        logRequest(req.method, req.path, 403);
         return;
     }
 

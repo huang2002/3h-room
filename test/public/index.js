@@ -1,16 +1,19 @@
 // @ts-check
 import { PAGE_TITLE_BASE } from './common.js';
 import { output } from './output.js';
-import { commandHandlerMap, currentIdentity } from './commands.js';
+import { commandHandlerMap } from './commands.js';
+import { currentIdentity } from './eventSource.js';
 
 document.title = PAGE_TITLE_BASE;
 
 const formElement = /** @type {HTMLFormElement} */(
     document.getElementById('form')
 );
+
 const inputElement = /** @type {HTMLInputElement} */(
     document.getElementById('input')
 );
+
 formElement.addEventListener('submit', () => {
 
     const submittedContent = inputElement.value;

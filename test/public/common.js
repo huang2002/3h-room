@@ -23,4 +23,4 @@ export const h = (tag, props, children) => {
         }
     }
     return element;
-}; export let currentIdentity = '';
+};

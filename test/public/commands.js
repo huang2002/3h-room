@@ -1,9 +1,6 @@
 // @ts-check
-import { PAGE_TITLE_BASE } from './common.js';
 import { output } from './output.js';
 import { setupEventSource, eventSource, closeEventSource } from './eventSource.js';
-
-export let currentIdentity = '';
 
 /**
  * @typedef {(...args: string[]) => (void | Promise<void>)} CommandHandler
@@ -33,9 +30,6 @@ export const commandHandlerMap = new Map([
     }],
 
     ['/login', /** @type {CommandHandler} */(identity) => {
-        currentIdentity = identity;
-        document.title = `${PAGE_TITLE_BASE} (${identity})`;
-        output('info', `Set current identity to "${identity}".`);
         setupEventSource(identity);
     }],
 

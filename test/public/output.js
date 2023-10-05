@@ -1,3 +1,4 @@
+// @ts-check
 import { h } from './common.js';
 
 const outputElement = /** @type {HTMLUListElement} */ (

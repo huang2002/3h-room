@@ -1,3 +1,6 @@
+// @ts-check
+import { PAGE_TITLE_BASE } from './common.js';
+export let currentIdentity = '';
 import { output } from './output.js';
 
 /**
@@ -27,14 +30,18 @@ export const setupEventSource = (identity) => {
     eventSource = new EventSource(eventSourceUrl);
 
     eventSource.addEventListener('open', () => {
+        currentIdentity = identity;
+        document.title = `${PAGE_TITLE_BASE} (${identity})`;
         output('info', `Connection established. (identity: ${identity})`);
     });
 
     eventSource.addEventListener('error', (event) => {
         output('info', `Connection lost due to an error. (identity: ${identity})`);
         console.error(event);
-        eventSource.close();
-        eventSource = null;
+        if (eventSource) {
+            eventSource.close();
+            eventSource = null;
+        }
     }, { once: true });
 
     eventSource.addEventListener('message', (event) => {
