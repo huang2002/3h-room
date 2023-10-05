@@ -1,3 +1,4 @@
+// @ts-check
 import { PAGE_TITLE_BASE } from './common.js';
 import { output } from './output.js';
 import { setupEventSource, eventSource, closeEventSource } from './eventSource.js';
@@ -5,7 +6,14 @@ import { setupEventSource, eventSource, closeEventSource } from './eventSource.j
 export let currentIdentity = '';
 
 /**
- * @typedef {(...args: string[]) => void} CommandHandler
+ * @typedef {(...args: string[]) => (void | Promise<void>)} CommandHandler
+ */
+
+/**
+ * @typedef {{
+ *     identity: string;
+ *     timestamps: import('../..').MemberTimestamps;
+ * }} MemberListItem
  */
 
 /**
@@ -39,15 +47,22 @@ export const commandHandlerMap = new Map([
         }
     }],
 
-    ['/ls', /** @type {CommandHandler} */async () => {
+    ['/ls', /** @type {CommandHandler} */(async () => {
         try {
             const response = await fetch('/api/ls');
-            /**
-             * @type {string[]}
-             */
-            const memberList = await response.json();
+            const memberList = /** @type {MemberListItem[]} */(
+                await response.json()
+            );
             if (memberList.length) {
-                output('ls', memberList.join('\n'));
+                output('ls', (
+                    memberList
+                        .map((member) => (
+                            member.identity
+                            + ' '
+                            + JSON.stringify(member.timestamps, null, 2)
+                        ))
+                        .join('\n'))
+                );
             } else {
                 output('ls', 'No room members.');
             }
@@ -55,6 +70,6 @@ export const commandHandlerMap = new Map([
             console.error(error);
             output('error', '/ls failed due to an error.');
         }
-    }],
+    })],
 
 ]);
