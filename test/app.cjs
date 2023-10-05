@@ -1,7 +1,9 @@
+// @ts-check
 const express = require('express');
 const { STATIC_ROOT, PORT, logRequest } = require('./common.cjs');
 const subHandler = require('./api/sub.cjs');
 const sendHandler = require('./api/send.cjs');
+const lsHandler = require('./api/ls.cjs');
 
 const app = express();
 
@@ -17,6 +19,7 @@ app.use((req, res, next) => {
 
 app.get('/api/sub/:name', subHandler);
 app.post('/api/send/:name', express.text(), sendHandler);
+app.get('/api/ls', lsHandler);
 
 app.use(express.static(STATIC_ROOT));
 
