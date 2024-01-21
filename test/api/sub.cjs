@@ -7,13 +7,23 @@ const { room, SSE_EVENTS, logRequest, backend } = require('../common.cjs');
  * @type {import('express').RequestHandler<{ name: string; }>}
  */
 module.exports = (req, res) => {
-
     const member = new HR.Member({
         identity: decodeURIComponent(req.params.name),
         response: res,
         sseController: new SSE.SSEController({
             backend,
         }),
+    });
+
+    member.on('enter', (_room) => {
+        const message = 'member entered: ' + member.identity;
+        console.log(message);
+        _room.sendEvent(SSE_EVENTS.DEBUG, message);
+    });
+    member.on('leave', (_room) => {
+        const message = 'member left: ' + member.identity;
+        console.log(message);
+        _room.sendEvent(SSE_EVENTS.DEBUG, message);
     });
 
     try {
@@ -28,13 +38,10 @@ module.exports = (req, res) => {
 
     res.once('close', () => {
         room.removeMember(member);
-        room.sendEvent(SSE_EVENTS.DEBUG, 'member left: ' + member.identity);
     });
 
-    room.sendEvent(SSE_EVENTS.DEBUG, 'member entered: ' + member.identity);
     member.sendEvent(SSE_EVENTS.WELCOME);
 
     res.status(200);
     logRequest(req.method, req.path, 200);
-
 };

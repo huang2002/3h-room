@@ -1,7 +1,11 @@
 import { SSEController } from '3h-sse';
 import { Member } from './Member';
 import { BackendAdaptorWithResponses, Timer } from './common';
-import { DuplicateIdentityError, MemberNotFoundError, MemberOverflowError } from './errors';
+import {
+    DuplicateIdentityError,
+    MemberNotFoundError,
+    MemberOverflowError,
+} from './errors';
 
 /**
  * Type of room-related timestamps.
@@ -22,7 +26,9 @@ export interface RoomTimestamps {
  */
 export interface RoomOptions<
     ResponseType,
-    SSEControllerType extends SSEController<BackendAdaptorWithResponses<ResponseType>>,
+    SSEControllerType extends SSEController<
+        BackendAdaptorWithResponses<ResponseType>
+    >,
 > {
     /**
      * Max member count.
@@ -46,9 +52,13 @@ export interface RoomOptions<
 export class Room<
     IdentityType = any,
     ResponseType = any,
-    MemberType extends Member<IdentityType, ResponseType> = Member<IdentityType, ResponseType>,
-    SSEControllerType extends SSEController<BackendAdaptorWithResponses<ResponseType>>
-    = SSEController<BackendAdaptorWithResponses<ResponseType>>,
+    MemberType extends Member<IdentityType, ResponseType> = Member<
+        IdentityType,
+        ResponseType
+    >,
+    SSEControllerType extends SSEController<
+        BackendAdaptorWithResponses<ResponseType>
+    > = SSEController<BackendAdaptorWithResponses<ResponseType>>,
 > {
     /** dts2md break */
     /**
@@ -56,10 +66,8 @@ export class Room<
      */
     constructor(options: RoomOptions<ResponseType, SSEControllerType>) {
         this.maxMemberCount = options.maxMemberCount;
-        this.sseController = (
-            options.sseController
-            ?? ((new SSEController()) as SSEControllerType)
-        );
+        this.sseController =
+            options.sseController ?? (new SSEController() as SSEControllerType);
         this.timer = options?.timer ?? Date.now;
         this.timestamps = {
             created: this.timer(),
@@ -96,7 +104,6 @@ export class Room<
      * Add a member to the room.
      */
     addMember(member: MemberType) {
-
         const now = this.timer();
 
         const { members } = this;
@@ -114,13 +121,13 @@ export class Room<
 
         member.timestamps.entered = now;
 
+        member.emit('enter', this);
     }
     /** dts2md break */
     /**
      * Remove a member from the room.
      */
     removeMember(member: MemberType) {
-
         const { members } = this;
         if (!members.has(member.identity)) {
             throw new MemberNotFoundError(member.identity);
@@ -131,7 +138,8 @@ export class Room<
             this.sseController.backend?.removeResponse(member.response);
         }
 
-    };
+        member.emit('leave', this);
+    }
     /** dts2md break */
     /**
      * Send specific content as-is.

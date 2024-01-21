@@ -1,5 +1,11 @@
 import { SSEController } from '3h-sse';
-import { BackendAdaptorWithResponses, Timer } from './common';
+import {
+    BackendAdaptorWithResponses,
+    Timer,
+    TypedEventEmitter,
+} from './common';
+import { EventEmitter } from 'events';
+import { Room } from './Room';
 
 /**
  * Type of member-related timestamps.
@@ -25,7 +31,9 @@ export interface MemberTimestamps {
 export interface MemberOptions<
     IdentityType,
     ResponseType,
-    SSEControllerType extends SSEController<BackendAdaptorWithResponses<ResponseType>>,
+    SSEControllerType extends SSEController<
+        BackendAdaptorWithResponses<ResponseType>
+    >,
 > {
     /**
      * Unique identity.
@@ -50,23 +58,29 @@ export interface MemberOptions<
 /** dts2md break */
 /**
  * Class of room members.
+ * @event enter Emits right after the member enters a room.
+ * The entered room will be provided as the only argument.
+ * @event leave Emits right after the member leaves a room.
+ * The left room will be provided as the only argument.
  */
 export class Member<
     IdentityType = unknown,
     ResponseType = any,
-    SSEControllerType extends SSEController<BackendAdaptorWithResponses<ResponseType>>
-    = SSEController<BackendAdaptorWithResponses<ResponseType>>,
-> {
+    SSEControllerType extends SSEController<
+        BackendAdaptorWithResponses<ResponseType>
+    > = SSEController<BackendAdaptorWithResponses<ResponseType>>,
+> extends EventEmitter {
     /** dts2md break */
     /**
      * Constructor of {@link Member}.
      */
-    constructor(options: MemberOptions<IdentityType, ResponseType, SSEControllerType>) {
+    constructor(
+        options: MemberOptions<IdentityType, ResponseType, SSEControllerType>,
+    ) {
+        super();
         this.identity = options.identity;
-        this.sseController = (
-            options.sseController
-            ?? ((new SSEController()) as SSEControllerType)
-        );
+        this.sseController =
+            options.sseController ?? (new SSEController() as SSEControllerType);
         this.timer = options.timer ?? Date.now;
         this.timestamps = {
             created: this.timer(),
@@ -114,7 +128,6 @@ export class Member<
      * Update response object.
      */
     setResponse(newResponse: ResponseType | null) {
-
         const oldResponse = this._response;
         if (oldResponse) {
             this.sseController.backend?.removeResponse(oldResponse);
@@ -124,7 +137,6 @@ export class Member<
         if (newResponse) {
             this.sseController.backend?.addResponse(newResponse);
         }
-
     }
     /** dts2md break */
     /**
