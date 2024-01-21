@@ -30,6 +30,7 @@
   },
   "homepage": "https://github.com/huang2002/3h-room#readme",
   "devDependencies": {
+    "@types/express": "^4.17.21",
     "@types/node": "^20.8.0",
     "dts2md": "^0.4.4",
     "express": "^4.18.2",
