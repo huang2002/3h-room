@@ -36,6 +36,7 @@ export const commandHandlerMap = new Map([
     ['/quit', /** @type {CommandHandler} */() => {
         if (eventSource) {
             closeEventSource();
+            output('info', 'Quitted.');
         } else {
             output('error', 'No connection to close.');
         }
