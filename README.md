@@ -31,6 +31,13 @@ app.get('/sub/:name', (req, res) => {
         }),
     });
 
+    member.on('enter', (_room) => {
+        _room.sendEvent('debug', 'member entered: ' + member.identity);
+    });
+    member.on('leave', (_room) => {
+        _room.sendEvent('debug', 'member left: ' + member.identity);
+    });
+
     try {
         room.addMember(member);
     } catch (error) {
@@ -41,10 +48,8 @@ app.get('/sub/:name', (req, res) => {
 
     res.once('close', () => {
         room.removeMember(member);
-        room.sendEvent('debug', 'member left: ' + member.identity);
     });
 
-    room.sendEvent('debug', 'member entered: ' + member.identity);
     member.sendEvent('info', 'welcome');
 
 });
