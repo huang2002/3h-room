@@ -24,7 +24,7 @@ export const commandHandlerMap = new Map([
             + '/help             -- Print available commands.\n'
             + '/login <identity> -- Connect to chat server using specific identity.\n'
             + '/quit             -- Close current connection.\n'
-            + '/ls               -- Show room members.'
+            + '/ls               -- Show room members.\n'
             + 'Any other message starting with a slash causes an error.')
         );
     }],
