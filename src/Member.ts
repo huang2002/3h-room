@@ -1,11 +1,6 @@
 import { SSEController } from '3h-sse';
-import {
-    BackendAdaptorWithResponses,
-    Timer,
-    TypedEventEmitter,
-} from './common';
+import { BackendAdaptorWithResponses, Timer } from './common';
 import { EventEmitter } from 'events';
-import { Room } from './Room';
 
 /**
  * Type of member-related timestamps.
