@@ -55,7 +55,7 @@ export interface MemberOptions<
  * Class of room members.
  * @event enter Emits right after the member enters a room.
  * The entered room will be provided as the only argument.
- * @event leave Emits right after the member leaves a room.
+ * @event leave Emits right before the member leaves a room.
  * The left room will be provided as the only argument.
  */
 export class Member<

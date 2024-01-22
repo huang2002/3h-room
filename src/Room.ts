@@ -51,7 +51,7 @@ export interface RoomOptions<
  * Class of SSE rooms.
  * @event enter Emits right after a member enters the room.
  * The entered member will be provided as the only argument.
- * @event leave Emits right after a member leaves the room.
+ * @event leave Emits right before a member leaves the room.
  * The left member will be provided as the only argument.
  */
 export class Room<
@@ -140,13 +140,13 @@ export class Room<
             throw new MemberNotFoundError(member.identity);
         }
 
+        this.emit('leave', member);
+        member.emit('leave', this);
+
         members.delete(member.identity);
         if (member.response) {
             this.sseController.backend?.removeResponse(member.response);
         }
-
-        member.emit('leave', this);
-        this.emit('leave', member);
     }
     /** dts2md break */
     /**
