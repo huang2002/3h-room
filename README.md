@@ -13,22 +13,26 @@ const HR = require('3h-room');
 
 const app = express();
 
-const backend = new SSE.NodeJSBackend();
+const createSSEController = () =>
+    new SSE.SSEController({
+        backend: new SSE.NodeJSBackend(),
+    })
+
 const room = new HR.Room({
     maxMemberCount: 2,
-    sseController: new SSE.SSEController({
-        backend,
-    }),
+    sseController: createSSEController(),
 });
+
+room.on('enter', (member) => {
+    member.sendEvent('info', 'welcome');
+})
 
 app.get('/sub/:name', (req, res) => {
 
     const member = new HR.Member({
         identity: decodeURIComponent(req.params.name),
         response: res,
-        sseController: new SSE.SSEController({
-            backend,
-        }),
+        sseController: createSSEController(),
     });
 
     member.on('enter', (_room) => {
@@ -49,8 +53,6 @@ app.get('/sub/:name', (req, res) => {
     res.once('close', () => {
         room.removeMember(member);
     });
-
-    member.sendEvent('info', 'welcome');
 
 });
 
