@@ -6,6 +6,7 @@ import {
     MemberNotFoundError,
     MemberOverflowError,
 } from './errors';
+import EventEmitter from 'events';
 
 /**
  * Type of room-related timestamps.
@@ -48,6 +49,10 @@ export interface RoomOptions<
 /** dts2md break */
 /**
  * Class of SSE rooms.
+ * @event enter Emits right after a member enters the room.
+ * The entered member will be provided as the only argument.
+ * @event leave Emits right after a member leaves the room.
+ * The left member will be provided as the only argument.
  */
 export class Room<
     IdentityType = any,
@@ -59,12 +64,13 @@ export class Room<
     SSEControllerType extends SSEController<
         BackendAdaptorWithResponses<ResponseType>
     > = SSEController<BackendAdaptorWithResponses<ResponseType>>,
-> {
+> extends EventEmitter {
     /** dts2md break */
     /**
      * Constructor of {@link Room}.
      */
     constructor(options: RoomOptions<ResponseType, SSEControllerType>) {
+        super();
         this.maxMemberCount = options.maxMemberCount;
         this.sseController =
             options.sseController ?? (new SSEController() as SSEControllerType);
@@ -122,6 +128,7 @@ export class Room<
         member.timestamps.entered = now;
 
         member.emit('enter', this);
+        this.emit('enter', member);
     }
     /** dts2md break */
     /**
@@ -139,6 +146,7 @@ export class Room<
         }
 
         member.emit('leave', this);
+        this.emit('leave', member);
     }
     /** dts2md break */
     /**
