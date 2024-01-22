@@ -13,11 +13,15 @@ const SSE_EVENTS = {
 };
 exports.SSE_EVENTS = SSE_EVENTS;
 
+const createSSEController = () =>
+    new SSE.SSEController({
+        backend: new SSE.NodeJSBackend(),
+    });
+exports.createSSEController = createSSEController;
+
 const room = new HR.Room({
     maxMemberCount: 3,
-    sseController: new SSE.SSEController({
-        backend: new SSE.NodeJSBackend(),
-    }),
+    sseController: createSSEController(),
 });
 room.on(
     'enter',
