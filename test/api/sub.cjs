@@ -1,7 +1,7 @@
 // @ts-check
 const SSE = require('3h-sse');
 const HR = require('../..');
-const { room, SSE_EVENTS, logRequest, backend } = require('../common.cjs');
+const { room, SSE_EVENTS, logRequest } = require('../common.cjs');
 
 /**
  * @type {import('express').RequestHandler<{ name: string; }>}
@@ -11,7 +11,7 @@ module.exports = (req, res) => {
         identity: decodeURIComponent(req.params.name),
         response: res,
         sseController: new SSE.SSEController({
-            backend,
+            backend: new SSE.NodeJSBackend(),
         }),
     });
 
@@ -39,8 +39,6 @@ module.exports = (req, res) => {
     res.once('close', () => {
         room.removeMember(member);
     });
-
-    member.sendEvent(SSE_EVENTS.WELCOME);
 
     res.status(200);
     logRequest(req.method, req.path, 200);
